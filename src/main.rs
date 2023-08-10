@@ -92,6 +92,57 @@ pub mod manage {
             println!("{:?}",student);
         }
     }
+
+    pub fn edit_student(students: &mut Students) {
+        let list = students.view();
+        for (index,student) in list.iter().enumerate() {
+            println!("Id: {} - {:?}",index, student);
+        }
+        println!("Enter student Id for edit:");
+        let id = match get_input_number() {
+            Some(input) => input,
+            None => return
+        };
+        let student_edit = match  students.class.get_mut(id as usize) {
+            Some(element) => element,
+            None => {
+                println!("Not found student by id : {}", id);
+                return
+            }
+        };
+        println!("Enter new student name:");
+        let name = match get_input() {
+            Some(input) => input,
+            None => return,
+        };
+        println!("Enter new student age:");
+        let age = match get_input_number() {
+            Some(input) => input,
+            None => return,
+        };
+        student_edit.age = age;
+        student_edit.name = name;
+        println!("Edit student successfully");
+
+    }
+
+    pub fn remove_student(students:&mut Students) {
+        let list = students.view();
+        for (index,student) in list.iter().enumerate() {
+            println!("Id: {} - {:?}",index, student);
+        }
+        println!("Enter student Id for edit:");
+        let id = match get_input_number() {
+            Some(input) => input,
+            None => return
+        };
+        if id as usize >= students.class.len() {
+            println!("Not found student");
+        } else {
+            println!("Remove student successfully");
+            students.class.remove(id as usize);
+        }
+    }
 }
 
 impl Manager {
@@ -127,8 +178,8 @@ fn main() {
         match Manager::choice(&input.unwrap()) {
             Some(Manager::AddStudent) => manage::add_student(&mut students),
             Some(Manager::ViewStudents) => manage::view(&students),
-            Some(Manager::EditStudent) => println!("3. Edit student"),
-            Some(Manager::DeleteStudent) => println!("4. Delete student"),
+            Some(Manager::EditStudent) => manage::edit_student(&mut students),
+            Some(Manager::DeleteStudent) => manage::remove_student(&mut students),
             _ => return,
         }
     }
